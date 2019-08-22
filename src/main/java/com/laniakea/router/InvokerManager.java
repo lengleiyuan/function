@@ -106,8 +106,7 @@ public class InvokerManager {
                     funcCritical.add(func);
 
                 } else {
-                    Object[] parametersVal = func.getParametersVal();
-                    git add README.md                    Object[] parametersValnew = new Object[parametersVal.length];
+                    Object[] parametersVal = func.getParametersVal();Object[] parametersValnew = new Object[parametersVal.length];
                     IntStream.range(0, parametersVal.length).boxed().forEach(i -> {
                         String value = String.valueOf(parametersVal[i]);
                         if (value.equals(top.getMethodNameAndParams())) {
