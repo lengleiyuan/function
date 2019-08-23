@@ -17,12 +17,16 @@ public class Test2019221 {
 
         return b3 + b4;
     }
+    public Object fun3(int b3,int b4){
+
+        return b3 + b4;
+    }
 
     public static void main(String[] args) throws Throwable {
 
         Test2019221 test2019221 = new Test2019221();
         Object execute = FuncBulider.boxed()
-                .setExpression("fun1(3,fun2(2,fun1(1,8)))")
+                .setExpression("fun1(3,fun2(fun3(1,2),fun1(1,8)))")
                 .setBean(test2019221).bulid()
                 .execute();
 

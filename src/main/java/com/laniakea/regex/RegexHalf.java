@@ -17,19 +17,19 @@ public class RegexHalf {
 
     private List<Integer> rightIndex;
 
-    private List<Integer> filterIndex = new ArrayList<>();
-
-    private Set<Integer> removeIndex = new HashSet<>();
-
+    private Map<Integer, Integer> indexMark = new LinkedHashMap<>();
 
     public RegexHalf(List<Integer> leftIndex, List<Integer> rightIndex) {
         this.leftIndex = leftIndex;
         this.rightIndex = rightIndex;
+        init();
     }
 
-    public Map<Integer, Integer> smallestDifference() {
+    public void init() {
 
-        Map<Integer, Integer> indexMark = new HashMap<>();
+        Set<Integer> removeIndex = new HashSet<>();
+
+        List<Integer> filterIndex = new ArrayList<>();
 
         HashMap<Integer, Integer> tempMark = new HashMap<>();
 
@@ -106,7 +106,25 @@ public class RegexHalf {
             }
             removeIndex.addAll(indexMark.values());
         }
+
+
+        rightIndex.clear(); leftIndex.clear();
+
+        for (Map.Entry<Integer, Integer> entry : indexMark.entrySet()) {
+            leftIndex.add(entry.getKey());
+            rightIndex.add(entry.getValue());
+        }
+    }
+
+    public Map<Integer, Integer> getIndexMark() {
         return indexMark;
     }
 
+    public List<Integer> getLeftIndex() {
+        return leftIndex;
+    }
+
+    public List<Integer> getRightIndex() {
+        return rightIndex;
+    }
 }

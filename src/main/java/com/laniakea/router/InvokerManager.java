@@ -80,6 +80,7 @@ public class InvokerManager {
 
             res = invoker.invoke(top.getBean(), top.getMethod(), top.getParametersVal());
             top.setResult(res);
+
             topCritical.remove(top);
             for (InvokerInfo func : funcInvoker) {
                 String subFuncStr = func.getSubFuncStr();
@@ -106,9 +107,12 @@ public class InvokerManager {
                     funcCritical.add(func);
 
                 } else {
-                    Object[] parametersVal = func.getParametersVal();Object[] parametersValnew = new Object[parametersVal.length];
-                    IntStream.range(0, parametersVal.length).boxed().forEach(i -> {
+                    Object[] parametersVal = func.getParametersVal();
+                    Object[] parametersValnew = new Object[parametersVal.length];
+                    boolean temp = false;
+                    for (int i = 0; i < parametersVal.length; i++) {
                         String value = String.valueOf(parametersVal[i]);
+
                         if (value.equals(top.getMethodNameAndParams())) {
 
                             if (!resStr.contains(",")) {
@@ -116,7 +120,12 @@ public class InvokerManager {
                             } else {
                                 parametersValnew[i] = resStr;
                             }
-                        } else {
+
+                        } else if(iscontainsFunc(value)) {
+                            funcBulider.setExpression(value).getFuncProcessor().resolveExpression();
+                            parametersValnew[i] = value;
+                            temp = true;
+                        }else {
                             if (!value.contains(",")) {
                                 parametersValnew[i] = Integer.valueOf(value);
                             } else {
@@ -124,9 +133,13 @@ public class InvokerManager {
                             }
                         }
 
-                    });
+                    }
                     func.setParametersVal(parametersValnew);
-                    topCritical.add(func);
+                    if(!temp){
+                        topCritical.add(func);
+                    }
+
+
                 }
             }
             funcInvoker.clear();

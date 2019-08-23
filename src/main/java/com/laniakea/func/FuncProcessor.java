@@ -64,11 +64,13 @@ public class FuncProcessor implements Function {
         RegexTrack regexTrack = RegexTrack.builder().source(expression).
                 regexs(Arrays.asList(LEFT_PARENTHESES, RIGHT_PARENTHESES,SIGN_PARENTHESES)).bulid();
 
-        List<Integer> leftIndex = regexTrack.getSeqIndex(LEFT_PARENTHESES);
-
-        List<Integer> rightIndex = regexTrack.getRevIndex(RIGHT_PARENTHESES);
-
         List<Integer> markerIndex = regexTrack.getSeqIndex(SIGN_PARENTHESES);
+
+        RegexHalf regexHalf = new RegexHalf(regexTrack.getSeqIndex(LEFT_PARENTHESES), regexTrack.getRevIndex(RIGHT_PARENTHESES));
+
+        List<Integer> leftIndex = regexHalf.getLeftIndex();
+
+        List<Integer> rightIndex = regexHalf.getRightIndex();
 
 
         IntStream.range(0,leftIndex.size()).boxed().forEach(i->{
@@ -126,8 +128,10 @@ public class FuncProcessor implements Function {
             List<Integer> rightList = regexTrack.getRevIndex(condition2);
 
             List<Integer> needIndex = new ArrayList<>();
+
             RegexHalf regexHalf = new RegexHalf(leftList, rightList);
-            Map<Integer, Integer> indexMark = regexHalf.smallestDifference();
+
+            Map<Integer, Integer> indexMark = regexHalf.getIndexMark();
 
             OUT:for (Integer index : regexList) {
                 IN:for (Map.Entry<Integer, Integer> entry : indexMark.entrySet()) {
