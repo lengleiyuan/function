@@ -34,6 +34,19 @@ public class RegexTrack {
         }
     }
 
+    public void regexsCheck(Character fun){
+        List<Integer> funList = charListMap.get(fun);
+        for (Map.Entry<Character, List<Integer>> entry : charListMap.entrySet()) {
+            if(entry.getKey() == fun){
+                continue;
+            }
+            if(entry.getValue().size() != funList.size()){
+                throw new RuntimeException( entry.getKey() + " regexs is not alignment ");
+            }
+
+        }
+    }
+
     public int getSize() {
         return size;
     }

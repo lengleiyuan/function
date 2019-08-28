@@ -22,10 +22,10 @@ public class Test2019221 {
         return b3 + b4;
     }
 
-    public static void main(String[] args) throws Throwable {
+    public static void main(String[] args) {
 
         Test2019221 test2019221 = new Test2019221();
-        FuncBulider.boxed().setExpression("fun1(3,fun2(3,fun1(1,fun2(2,4),8)),fun3(2,2))")
+        FuncBulider.boxed().setExpression("fun1(3,fun2(3,fun1(1,fun2(2,4),8)),fun3(2,5))")
                 .setBean(test2019221).bulid()
                 .execute();
 

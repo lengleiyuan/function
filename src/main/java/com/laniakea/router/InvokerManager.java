@@ -1,6 +1,5 @@
 package com.laniakea.router;
 
-import com.laniakea.func.FuncBulider;
 import com.laniakea.regex.RegexHalf;
 
 import java.util.ArrayList;
@@ -12,6 +11,8 @@ import java.util.List;
  * @version InvokerManager.java, v 0.1 2019年08月16日 14:04 wb-lgc489196 Exp
  */
 public class InvokerManager {
+
+    public static final String ERROR_CODE = "scwt10";
 
     private List<InvokerInfo> topInvoker = new ArrayList<>();
 
@@ -65,7 +66,7 @@ public class InvokerManager {
         this.allInvoker = allInvoker;
     }
 
-    public Object invoke() throws Throwable {
+    public Object invoke() {
 
         Object res = null;
 
@@ -126,7 +127,11 @@ public class InvokerManager {
         topInvoker.addAll(topCritical);
 
         if (topCritical.isEmpty()) {
-            System.out.println("The end execution result set is { " + res + " } ");
+            if(res.equals(ERROR_CODE)){
+                System.err.println("The end execution result is fail ");
+            }else{
+                System.out.println("The end execution result set is { " + res + " } ");
+            }
             return res;
         }
 

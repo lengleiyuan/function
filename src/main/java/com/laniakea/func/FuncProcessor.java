@@ -61,6 +61,9 @@ public class FuncProcessor implements Function {
         RegexTrack regexTrack = RegexTrack.builder().source(expression).
                 regexs(Arrays.asList(LEFT_PARENTHESES, RIGHT_PARENTHESES,SIGN_PARENTHESES)).bulid();
 
+
+        regexTrack.regexsCheck(SIGN_PARENTHESES);
+
         List<Integer> markerIndex = regexTrack.getSeqIndex(SIGN_PARENTHESES);
 
         RegexHalf regexHalf = new RegexHalf(regexTrack.getSeqIndex(LEFT_PARENTHESES), regexTrack.getRevIndex(RIGHT_PARENTHESES));
@@ -89,7 +92,7 @@ public class FuncProcessor implements Function {
             Object[] useParamArrays = new Object[paramArrays.length] ;
             List<Class<?>> paramTypes = new ArrayList<>();
 
-            IntStream.range(0,paramArrays.length).boxed().forEach(convertTypeClass(useParamArrays,paramTypes,paramArrays,InvokerInfo));
+            IntStream.range(0,paramArrays.length).boxed().forEach(convertTypeClass(useParamArrays,paramTypes,paramArrays));
 
 
             if(StringUtils.isEmpty(params)){
@@ -103,6 +106,11 @@ public class FuncProcessor implements Function {
             InvokerInfo.setMethodName(methodName);
             InvokerInfo.setMethodNameAndParams(methodName + LEFT_PARENTHESES + params + RIGHT_PARENTHESES);
             Method method = ReflectionUtils.findMethod(bean.getClass(), methodName, (Class[]) paramTypes.toArray(new Class[paramTypes.size()]));
+
+            if(null == method){
+                throw new RuntimeException("please check parameterTypes, methodName {" +methodName + "}");
+            }
+
             InvokerInfo.setMethod(method);
             InvokerInfo.setBean(bean);
             InvokerInfo.setaClass(bean.getClass());
@@ -157,21 +165,19 @@ public class FuncProcessor implements Function {
 
     private Consumer<Integer> convertTypeClass(Object[] useParamArrays,
                                                List<Class<?>> paramTypes,
-                                               String[] paramArrays,
-                                               InvokerInfo InvokerInfo) {
+                                               String[] paramArrays) {
         return (b) -> {
 
-            if (paramArrays[b].contains(FUNC)) {
-                useParamArrays[b] = paramArrays[b];
-            }
-            if (!paramArrays[b].contains(SINGLE_MARK)) {
-                if (!paramArrays[b].contains(FUNC)) {
+            if (paramArrays[b].startsWith(SINGLE_MARK)) {
+                useParamArrays[b] = paramArrays[b].replace("'","");
+                paramTypes.add(String.class);
+            } else {
+                paramTypes.add(int.class);
+                if (paramArrays[b].contains(FUNC)) {
+                    useParamArrays[b] = paramArrays[b];
+                } else {
                     useParamArrays[b] = Integer.valueOf(paramArrays[b]);
                 }
-                paramTypes.add(int.class);
-            } else {
-                useParamArrays[b] = paramArrays[b];
-                paramTypes.add(String.class);
             }
         };
     }
@@ -200,11 +206,13 @@ public class FuncProcessor implements Function {
 
 
     @Override
-    public Object execute() throws Throwable {
+    public Object execute() {
         resolveExpression();
         List<InvokerInfo> allInvoker = invokerManager.getAllInvoker();
         System.out.printf("funcProcess is start, need to deal with %d Invoker.\n",allInvoker.size());
         allInvoker.forEach(v->System.out.printf("The Invoker methodNameAndParams is %s .\n",v.getMethodNameAndParams()));
-        return invokerManager.invoke();
+
+       return invokerManager.invoke();
+
     }
 }

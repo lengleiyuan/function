@@ -1,8 +1,6 @@
 package com.laniakea.router;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Objects;
 
 /**
  * @author wb-lgc489196
@@ -22,9 +20,6 @@ public class InvokerInfo {
 
     private Object[] parametersVal;
 
-    private int priority;
-
-    private String subFuncStr;
 
     private String methodNameAndParams;
 
@@ -60,23 +55,6 @@ public class InvokerInfo {
 
     public void setMethodName(String methodName) {
         this.methodName = methodName;
-    }
-
-    public String getSubFuncStr() {
-        return subFuncStr;
-    }
-
-    public void setSubFuncStr(String subFuncStr) {
-        this.subFuncStr = subFuncStr;
-    }
-
-
-    public int getPriority() {
-        return priority;
-    }
-
-    public void setPriority(int priority) {
-        this.priority = priority;
     }
 
     public Class<?> getaClass() {
