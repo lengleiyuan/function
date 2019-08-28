@@ -52,7 +52,7 @@ public class FuncProcessor implements Function {
     public void resolveExpression(){
 
         if(StringUtils.isEmpty(expression) || !expression.contains(FUNC)){
-            return;
+            throw new RuntimeException("expression is not null ");
         }
 
         expression.trim();
