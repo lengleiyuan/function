@@ -3,16 +3,12 @@ package com.laniakea.regex;
 
 
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author wb-lgc489196
  * @version RegexHalf.java, v 0.1 2019年08月19日 10:36 wb-lgc489196 Exp
  */
 public class RegexHalf {
-    
-
 
 
     private List<Integer> leftIndex;
@@ -118,22 +114,7 @@ public class RegexHalf {
         }
     }
 
-    public static boolean isNumeric(String str) {
-        Pattern pattern = Pattern.compile("[0-9]*");
-        Matcher isNum = pattern.matcher(str);
-        if (!isNum.matches()) {
-            return false;
-        }
-        return true;
-    }
 
-    public static boolean iscontainsFunc(String funcStr) {
-        if (!funcStr.contains("fun")) {
-            return false;
-        } else {
-            return true;
-        }
-    }
 
 
     public Map<Integer, Integer> getIndexMark() {

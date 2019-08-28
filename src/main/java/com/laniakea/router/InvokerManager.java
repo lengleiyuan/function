@@ -1,6 +1,7 @@
 package com.laniakea.router;
 
 import com.laniakea.regex.RegexHalf;
+import com.laniakea.regex.RegexKit;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -98,12 +99,12 @@ public class InvokerManager {
 
                     value = value.replace(top.getMethodNameAndParams(), resStr);
 
-                    if (RegexHalf.isNumeric(value)) {
+                    if (RegexKit.isNumeric(value)) {
                         parametersVal[i] = Integer.valueOf(value);
                     } else {
                         parametersVal[i] = value;
                     }
-                    if(RegexHalf.iscontainsFunc(value)){
+                    if(RegexKit.iscontainsFunc(value)){
                         isTemp = true;
                     }
 
