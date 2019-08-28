@@ -1,10 +1,11 @@
 package com.laniakea.router;
 
 import com.laniakea.func.FuncBulider;
+import com.laniakea.regex.RegexHalf;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.IntStream;
 
 /**
  * @author wb-lgc489196
@@ -18,15 +19,10 @@ public class InvokerManager {
 
     private List<InvokerInfo> funcInvoker = new ArrayList<>();
 
-    private List<InvokerInfo> topCritical = new ArrayList<>();
+    private List<InvokerInfo> topCritical = new LinkedList<>();
 
-    private List<InvokerInfo> funcCritical = new ArrayList<>();
+    private List<InvokerInfo> funcCritical = new LinkedList<>();
 
-    private FuncBulider funcBulider;
-
-    public InvokerManager(FuncBulider funcBulider) {
-        this.funcBulider = funcBulider;
-    }
 
     private Invoker invoker = new Invoker();
 
@@ -44,13 +40,13 @@ public class InvokerManager {
     }
 
     public List<InvokerInfo> addTopInvoker(InvokerInfo InvokerInfo) {
-        topCritical.add(InvokerInfo);
-        return topCritical;
+        topInvoker.add(InvokerInfo);
+        return topInvoker;
     }
 
     public List<InvokerInfo> addFuncInvoker(InvokerInfo InvokerInfo) {
-        funcCritical.add(InvokerInfo);
-        return funcCritical;
+        funcInvoker.add(InvokerInfo);
+        return funcInvoker;
     }
 
     public List<InvokerInfo> getTopInvoker() {
@@ -71,92 +67,71 @@ public class InvokerManager {
 
     public Object invoke() throws Throwable {
 
-        topInvoker.addAll(topCritical);
-        funcInvoker.addAll(funcCritical);
-
         Object res = null;
 
         for (InvokerInfo top : topInvoker) {
 
+            topCritical.remove(top);
+
             res = invoker.invoke(top.getBean(), top.getMethod(), top.getParametersVal());
+
             top.setResult(res);
 
-            topCritical.remove(top);
+            String resStr = String.valueOf(res);
+
             for (InvokerInfo func : funcInvoker) {
-                String subFuncStr = func.getSubFuncStr();
-                if (!subFuncStr.contains(top.getMethodName())) {
-                    continue;
-                }
+
                 funcCritical.remove(func);
-                String resStr = String.valueOf(res);
-                String newSubFuncStr = subFuncStr.replace(top.getMethodNameAndParams(), resStr);
 
-                if (iscontainsFunc(newSubFuncStr)) {
-                    funcBulider.setExpression(newSubFuncStr).getFuncProcessor().resolveExpression();
-                    func.setSubFuncStr(newSubFuncStr);
-                    Object[] parametersVal = func.getParametersVal();
+                String methodNameAndParams = func.getMethodNameAndParams();
 
-                    IntStream.range(0, parametersVal.length).boxed().forEach(i -> {
-                        String value = String.valueOf(parametersVal[i]);
-                        if (value.equals(subFuncStr)) {
-                            parametersVal[i] = newSubFuncStr;
+                func.setMethodNameAndParams(methodNameAndParams.replace(top.getMethodNameAndParams(), resStr));
 
-                        }
-                    });
+                Object[] parametersVal = func.getParametersVal();
 
-                    funcCritical.add(func);
+                boolean isTemp = false;
 
-                } else {
-                    Object[] parametersVal = func.getParametersVal();
-                    Object[] parametersValnew = new Object[parametersVal.length];
-                    boolean temp = false;
-                    for (int i = 0; i < parametersVal.length; i++) {
-                        String value = String.valueOf(parametersVal[i]);
+                for (int i = 0; i < parametersVal.length; i++) {
 
-                        if (value.equals(top.getMethodNameAndParams())) {
+                    String value = String.valueOf(parametersVal[i]);
 
-                            if (!resStr.contains(",")) {
-                                parametersValnew[i] = Integer.valueOf(resStr);
-                            } else {
-                                parametersValnew[i] = resStr;
-                            }
+                    value = value.replace(top.getMethodNameAndParams(), resStr);
 
-                        } else if(iscontainsFunc(value)) {
-                            funcBulider.setExpression(value).getFuncProcessor().resolveExpression();
-                            parametersValnew[i] = value;
-                            temp = true;
-                        }else {
-                            if (!value.contains(",")) {
-                                parametersValnew[i] = Integer.valueOf(value);
-                            } else {
-                                parametersValnew[i] = value;
-                            }
-                        }
-
+                    if (RegexHalf.isNumeric(value)) {
+                        parametersVal[i] = Integer.valueOf(value);
+                    } else {
+                        parametersVal[i] = value;
                     }
-                    func.setParametersVal(parametersValnew);
-                    if(!temp){
-                        topCritical.add(func);
+                    if(RegexHalf.iscontainsFunc(value)){
+                        isTemp = true;
                     }
-
 
                 }
+
+                if(isTemp){
+                    System.out.printf("add new funcInvoker chain,func methodNameAndParams: %s.\n",func.getMethodNameAndParams());
+                    funcCritical.add(func);
+                }else{
+                    System.out.printf("add new topInvoker chain ,func methodNameAndParams: %s.\n",func.getMethodNameAndParams());
+                    topCritical.add(func);
+                }
+
             }
+
             funcInvoker.clear();
+            funcInvoker.addAll(funcCritical);
         }
+
         topInvoker.clear();
+        topInvoker.addAll(topCritical);
+
         if (topCritical.isEmpty()) {
+            System.out.println("The end execution result set is { " + res + " } ");
             return res;
         }
+
         return invoke();
     }
 
-    public boolean iscontainsFunc(String funcStr) {
-        if (!funcStr.contains("fun")) {
-            return false;
-        } else {
-            return true;
-        }
-    }
 
 }

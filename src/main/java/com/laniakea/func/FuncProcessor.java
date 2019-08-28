@@ -41,9 +41,6 @@ public class FuncProcessor implements Function {
 
     private static final char SIGN_PARENTHESES = 'f';
 
-    public void setExpression(String expression) {
-        this.expression = expression;
-    }
 
     public FuncProcessor(FuncBulider funcBulider, InvokerManager invokerManager){
         this.bean = funcBulider.getObj();
@@ -166,7 +163,6 @@ public class FuncProcessor implements Function {
 
             if (paramArrays[b].contains(FUNC)) {
                 useParamArrays[b] = paramArrays[b];
-                InvokerInfo.setSubFuncStr(paramArrays[b]);
             }
             if (!paramArrays[b].contains(SINGLE_MARK)) {
                 if (!paramArrays[b].contains(FUNC)) {
@@ -206,6 +202,9 @@ public class FuncProcessor implements Function {
     @Override
     public Object execute() throws Throwable {
         resolveExpression();
+        List<InvokerInfo> allInvoker = invokerManager.getAllInvoker();
+        System.out.printf("funcProcess is start, need to deal with %d Invoker.\n",allInvoker.size());
+        allInvoker.forEach(v->System.out.printf("The Invoker methodNameAndParams is %s .\n",v.getMethodNameAndParams()));
         return invokerManager.invoke();
     }
 }

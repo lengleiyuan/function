@@ -9,9 +9,9 @@ import com.laniakea.func.FuncBulider;
 public class Test2019221 {
 
 
-    public Object fun1(int b2,int b4){
+    public Object fun1(int b2,int b4,int b1){
 
-        return b2 + b4;
+        return b2 + b4 + b1;
     }
     public Object fun2(int b3,int b4){
 
@@ -25,11 +25,9 @@ public class Test2019221 {
     public static void main(String[] args) throws Throwable {
 
         Test2019221 test2019221 = new Test2019221();
-        Object execute = FuncBulider.boxed()
-                .setExpression("fun1(3,fun2(fun3(1,2),fun1(1,8)))")
+        FuncBulider.boxed().setExpression("fun1(3,fun2(3,fun1(1,fun2(2,4),8)),fun3(2,2))")
                 .setBean(test2019221).bulid()
                 .execute();
 
-        System.out.println(execute);
     }
 }

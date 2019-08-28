@@ -14,10 +14,6 @@ public class FuncBulider {
 
     private FuncProcessor funcProcessor;
 
-    public FuncProcessor getFuncProcessor() {
-        funcProcessor.setExpression(expression);
-        return funcProcessor;
-    }
 
     public FuncBulider() {}
 
@@ -32,7 +28,7 @@ public class FuncBulider {
     }
 
     public FuncProcessor bulid(){
-        FuncProcessor funcProcessor = new FuncProcessor(this, new InvokerManager(this));
+        FuncProcessor funcProcessor = new FuncProcessor(this, new InvokerManager());
         this.funcProcessor = funcProcessor;
         return funcProcessor;
     }

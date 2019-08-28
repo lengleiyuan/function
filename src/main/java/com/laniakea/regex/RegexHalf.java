@@ -3,6 +3,8 @@ package com.laniakea.regex;
 
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author wb-lgc489196
@@ -115,6 +117,24 @@ public class RegexHalf {
             rightIndex.add(entry.getValue());
         }
     }
+
+    public static boolean isNumeric(String str) {
+        Pattern pattern = Pattern.compile("[0-9]*");
+        Matcher isNum = pattern.matcher(str);
+        if (!isNum.matches()) {
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean iscontainsFunc(String funcStr) {
+        if (!funcStr.contains("fun")) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
 
     public Map<Integer, Integer> getIndexMark() {
         return indexMark;
