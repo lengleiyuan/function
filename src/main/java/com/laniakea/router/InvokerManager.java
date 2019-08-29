@@ -1,6 +1,5 @@
 package com.laniakea.router;
 
-import com.laniakea.regex.RegexHalf;
 import com.laniakea.regex.RegexKit;
 
 import java.util.ArrayList;
@@ -95,26 +94,32 @@ public class InvokerManager {
 
                 for (int i = 0; i < parametersVal.length; i++) {
 
-                    String value = String.valueOf(parametersVal[i]);
+                    if (parametersVal[i] instanceof String) {
 
-                    value = value.replace(top.getMethodNameAndParams(), resStr);
+                        String value = String.valueOf(parametersVal[i]);
 
-                    if (RegexKit.isNumeric(value)) {
-                        parametersVal[i] = Integer.valueOf(value);
-                    } else {
-                        parametersVal[i] = value;
+                        value = value.replace(top.getMethodNameAndParams().replace("'", ""), resStr);
+
+                        if (RegexKit.iscontainsFunc(value)) {
+                            isTemp = true;
+                        }
+
+                        if(func.getTypeParameters()[i]
+                                .isAssignableFrom(int.class)
+                                && RegexKit.isNumeric(value)){
+                            parametersVal[i] = Integer.valueOf(value);
+                        }else{
+                            parametersVal[i] = value;
+                        }
+
                     }
-                    if(RegexKit.iscontainsFunc(value)){
-                        isTemp = true;
-                    }
-
                 }
 
-                if(isTemp){
-                    System.out.printf("add new funcInvoker chain,func methodNameAndParams: %s.\n",func.getMethodNameAndParams());
+                if (isTemp) {
+                    System.out.printf("add new funcInvoker chain,func methodNameAndParams: %s.\n", func.getMethodNameAndParams());
                     funcCritical.add(func);
-                }else{
-                    System.out.printf("add new topInvoker chain ,func methodNameAndParams: %s.\n",func.getMethodNameAndParams());
+                } else {
+                    System.out.printf("add new topInvoker chain ,func methodNameAndParams: %s.\n", func.getMethodNameAndParams());
                     topCritical.add(func);
                 }
 
