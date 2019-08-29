@@ -10,15 +10,15 @@ public class Test2019221 {
 
     public class FuncMethod{
 
-        public Integer fun1(int b2,int b4,int b1){
+        public Integer fun1(int b2,int b4,String b1){
 
-            return b2 + b4 + b1;
+            return Integer.valueOf(b2 + b4 + b1);
         }
         public Integer fun2(int b3,int b4){
 
             return b3 + b4;
         }
-        public Integer fun3(int b3,int b4){
+        public String fun3(String b3,int b4){
 
             return b3 + b4;
         }
@@ -31,7 +31,7 @@ public class Test2019221 {
 
         Test2019221 test2019221 = new Test2019221();
         FuncMethod funcMethod = test2019221.new FuncMethod();
-        FuncBulider.boxed().setExpression("fun1(0,fun2(5,fun1(1,fun2(56,4),7)),fun3(5,0))")
+        FuncBulider.boxed().setExpression("fun1(0,fun2(5,fun1(1,fun2(56,4),'7')),'fun3('5',0)')")
                 .setBean(funcMethod).bulid()
                 .execute();
 
